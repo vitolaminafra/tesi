@@ -1,0 +1,6 @@
+flask
+flask-migrate
+PyJWT
+Flask-SQLAlchemy
+mysqlclient
+flask_cors
