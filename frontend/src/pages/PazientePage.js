@@ -4,11 +4,21 @@ import { useNavigate } from 'react-router-dom';
 // @mui
 import {
     Card,
+    Table,
     Stack,
     Avatar,
     Button,
+    TableRow,
+    MenuItem,
+    TableBody,
+    TableCell,
     Container,
     Typography,
+    IconButton,
+    TableContainer,
+    Modal,
+    Box,
+    Alert,
     Chip,
     Divider
 } from '@mui/material';
@@ -23,6 +33,17 @@ import FemaleRoundedIcon from '@mui/icons-material/FemaleRounded';
 
 import useForm from 'src/hooks/UseForm';
 
+import TextField from '@mui/material/TextField'
+import Grid2 from '@mui/material/Unstable_Grid2';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
+import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
+import Radio from '@mui/material/Radio';
+import RadioGroup from '@mui/material/RadioGroup';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import FormLabel from '@mui/material/FormLabel';
+import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
+import InputAdornment from '@mui/material/InputAdornment';
 
 import axios from 'axios';
 
@@ -68,16 +89,134 @@ export default function PazientePage() {
 
     const navigate = useNavigate();
 
-    const [openModal, setOpenModal] = useState(false);
+    const [openBiopsiaModal, setOpenBiopsiaModal] = useState(false);
 
-    const handleOpenModal = () => setOpenModal(true);
-    const handleCloseModal = () => setOpenModal(false);
+    const handleOpenBiopsiaModal = () => setOpenBiopsiaModal(true);
+    const handleCloseBiopsiaModal = () => setOpenBiopsiaModal(false);
+
+    const [openFollowUpModal, setOpenFollowUpModal] = useState(false);
+
+    const handleOpenFollowUpModal = () => setOpenFollowUpModal(true);
+    const handleCloseFollowUpModal = () => setOpenFollowUpModal(false);
 
     const [successAlert, setSuccessAlert] = useState(false);
     const [disableButton, setDisableButton] = useState(false);
 
     const [paziente, setPaziente] = useState({});
     const [loaded, setLoaded] = useState(false);
+
+    const MValues = [
+        {
+            value: false,
+            label: '0'
+        }, {
+            value: true,
+            label: '1'
+        }
+    ];
+
+    const EValues = [
+        {
+            value: false,
+            label: '0'
+        }, {
+            value: true,
+            label: '1'
+        }
+    ];
+
+    const SValues = [
+        {
+            value: false,
+            label: '0'
+        }, {
+            value: true,
+            label: '1'
+        }
+    ];
+
+    const TValues = [
+        {
+            value: '0',
+            label: '0'
+        }, {
+            value: '1',
+            label: '1'
+        }, {
+            value: '2',
+            label: '2'
+        }
+    ];
+
+    const CValues = [
+        {
+            value: false,
+            label: '0'
+        }, {
+            value: true,
+            label: '1'
+        }
+    ];
+
+    const NBofBPmedsValues = [
+        {
+            value: '0',
+            label: '0'
+        }, {
+            value: '1',
+            label: '1'
+        }, {
+            value: '2',
+            label: '2'
+        }, {
+            value: '3',
+            label: '3'
+        }, {
+            value: '4',
+            label: '4'
+        }, {
+            value: '5',
+            label: '5'
+        }, {
+            value: '6',
+            label: '6'
+        }, {
+            value: '7',
+            label: '7'
+        }, {
+            value: '8',
+            label: '8'
+        }, {
+            value: '9',
+            label: '9'
+        }, {
+            value: '10',
+            label: '10'
+        }
+    ];
+
+    const RASBlockersValues = [
+        {
+            value: '0',
+            label: '0'
+        }, {
+            value: '1',
+            label: '1'
+        }, {
+            value: '2',
+            label: '2'
+        }
+    ];
+
+    const ImmunotherapiesValues = [
+        {
+            value: false,
+            label: '0'
+        }, {
+            value: true,
+            label: '1'
+        }
+    ];
 
     useEffect(() => {
         if (localStorage.getItem("user") === null) {
@@ -110,6 +249,9 @@ export default function PazientePage() {
         });
     }
 
+    function saveBiopsia() {
+
+    }
 
     function getSexString(sex) {
         if (sex === 'male')
@@ -140,10 +282,10 @@ export default function PazientePage() {
                         Dettagli paziente
                     </Typography>
                     <div style={{ display: 'flex', gap: '1rem' }}>
-                        <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />} onClick={handleOpenModal}>
+                        <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />} onClick={handleOpenBiopsiaModal}>
                             Aggiungi biopsia
                         </Button>
-                        <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />} onClick={handleOpenModal}>
+                        <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />} onClick={handleOpenFollowUpModal}>
                             Aggiungi follow up
                         </Button>
                     </div>
@@ -169,7 +311,7 @@ export default function PazientePage() {
                         </div>
                     </div>
 
-                    <Divider style={{ marginTop: '1rem', marginBottom: '1rem' }} />
+                    <Divider style={{ marginTop: '1rem' }} />
                     <AppWebsiteVisits
                         title="Previsione"
                         subheader="(+43%) than last year"
@@ -209,6 +351,337 @@ export default function PazientePage() {
                     />
                 </Card>
             </Container>
+
+            <Modal
+                open={openBiopsiaModal}
+                //onClose={handleCloseModal}
+                aria-labelledby="modal-modal-title"
+                aria-describedby="modal-modal-description"
+            >
+                <Box sx={modalStyle}>
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: '2rem' }}>
+                        <Typography variant="h4" gutterBottom>
+                            Inserisci i dati della biopsia
+                        </Typography>
+                        <IconButton aria-label="close" onClick={handleCloseBiopsiaModal}>
+                            <CloseRoundedIcon />
+                        </IconButton>
+                    </Box>
+                    <Grid2 container="container" spacing={2}>
+                        <Grid2 xs={12} sm={6}>
+                            <LocalizationProvider dateAdapter={AdapterMoment}>
+                                <DesktopDatePicker
+                                    label="Data biopsia"
+                                    inputFormat="DD/MM/YYYY"
+                                    name="birth_date"
+                                    value={dateValue}
+                                    onChange={(newValue) => {
+                                        setDateValue(newValue);
+                                    }}
+                                    slotProps={{ textField: { fullWidth: true } }}
+
+                                />
+                            </LocalizationProvider>
+                        </Grid2>
+
+                        <Grid2 xs={12} sm={6}>
+                            <TextField
+                                select
+                                id="m"
+                                name="m"
+                                defaultValue=""
+                                values={MValues}
+                                onChange={handleInputChange}
+                                value={formInputs.m}
+                                label="M"
+                                variant="outlined"
+                                required
+                                fullWidth>
+                                {
+                                    MValues.map((option) => (
+                                        <MenuItem key={option.value} value={option.value}>
+                                            {option.label}
+                                        </MenuItem>
+                                    ))
+                                }
+                            </TextField>
+                        </Grid2>
+                        <Grid2 xs={12} sm={6}>
+                            <TextField
+                                select
+                                id="e"
+                                name="e"
+                                defaultValue=""
+                                values={EValues}
+                                onChange={handleInputChange}
+                                value={formInputs.e}
+                                label="E"
+                                variant="outlined"
+                                required
+                                fullWidth>
+                                {
+                                    EValues.map((option) => (
+                                        <MenuItem key={option.value} value={option.value}>
+                                            {option.label}
+                                        </MenuItem>
+                                    ))
+                                }
+                            </TextField>
+                        </Grid2>
+                        <Grid2 xs={12} sm={6}>
+                            <TextField
+                                select
+                                id="s"
+                                name="s"
+                                defaultValue=""
+                                onChange={handleInputChange}
+                                value={formInputs.s}
+                                values={SValues}
+                                label="S"
+                                variant="outlined"
+                                required
+                                fullWidth>
+                                {
+                                    SValues.map((option) => (
+                                        <MenuItem key={option.value} value={option.value}>
+                                            {option.label}
+                                        </MenuItem>
+                                    ))
+                                }
+                            </TextField>
+                        </Grid2>
+
+                        <Grid2 xs={12} sm={6}>
+                            <TextField
+                                select
+                                id="t"
+                                name="t"
+                                defaultValue=""
+                                values={TValues}
+                                onChange={handleInputChange}
+                                value={formInputs.t}
+                                label="T"
+                                variant="outlined"
+                                required
+                                fullWidth>
+                                {
+                                    TValues.map((option) => (
+                                        <MenuItem key={option.value} value={option.value}>
+                                            {option.label}
+                                        </MenuItem>
+                                    ))
+                                }
+                            </TextField>
+                        </Grid2>
+                        <Grid2 xs={12} sm={6}>
+                            <TextField
+                                select
+                                id="c"
+                                name="c"
+                                defaultValue=""
+                                values={CValues}
+                                onChange={handleInputChange}
+                                value={formInputs.c}
+                                label="C"
+                                variant="outlined"
+                                required
+                                fullWidth>
+                                {
+                                    CValues.map((option) => (
+                                        <MenuItem key={option.value} value={option.value}>
+                                            {option.label}
+                                        </MenuItem>
+                                    ))
+                                }
+                            </TextField>
+                        </Grid2>
+
+                        <Grid2 xs={12} sm={12} style={{ display: 'flex', justifyContent: 'center' }}>
+                            <Button className="submit-button" disabled={disableButton} startIcon={<Iconify icon="charm:circle-tick" />} size="medium" variant="contained" onClick={saveBiopsia} sx={{ mt: '2rem' }}>Salva paziente</Button>
+                        </Grid2>
+                    </Grid2>
+                    {successAlert && <Alert severity="success" sx={{ mt: '2rem' }}>Dati del biopsia salvati con successo!</Alert>}
+                </Box>
+            </Modal >
+
+            <Modal
+                open={openFollowUpModal}
+                //onClose={handleCloseModal}
+                aria-labelledby="modal-modal-title"
+                aria-describedby="modal-modal-description"
+            >
+                <Box sx={modalStyle}>
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: '2rem' }}>
+                        <Typography variant="h4" gutterBottom>
+                            Inserisci i dati del follow up
+                        </Typography>
+                        <IconButton aria-label="close" onClick={handleCloseFollowUpModal}>
+                            <CloseRoundedIcon />
+                        </IconButton>
+                    </Box>
+                    <Grid2 container="container" spacing={2}>
+                        <Grid2 xs={12} sm={6} md={4}>
+                            <LocalizationProvider dateAdapter={AdapterMoment}>
+                                <DesktopDatePicker
+                                    id="ass_date"
+                                    name="ass_date"
+                                    label="Data follow up"
+                                    inputFormat="DD/MM/YYYY"
+                                    value={dateValue}
+                                    onChange={(newValue) => {
+                                        setDateValue(newValue);
+                                    }}
+                                    slotProps={{ textField: { fullWidth: true } }} />
+                                    
+                            </LocalizationProvider>
+                        </Grid2>
+                        <Grid2 xs={12} sm={6} md={4}>
+                            <TextField
+                                id="height"
+                                name="height"
+                                label="Altezza"
+                                variant="outlined"
+                                required
+                                fullWidth
+                                onChange={handleInputChange}
+                                value={formInputs.height}
+                                InputProps={{
+                                    endAdornment: <InputAdornment position="end">cm</InputAdornment>
+                                }} />
+                        </Grid2>
+                        <Grid2 xs={12} sm={6} md={4}>
+                            <TextField
+                                id="weight"
+                                name="weight"
+                                label="Peso"
+                                variant="outlined"
+                                required
+                                fullWidth
+                                onChange={handleInputChange}
+                                value={formInputs.weight}
+                                InputProps={{
+                                    endAdornment: <InputAdornment position="end">kg</InputAdornment>
+                                }} />
+                        </Grid2>
+                        
+                        <Grid2 xs={12} sm={6} md={3}>
+                            <TextField
+                                id="systolic"
+                                name="systolic"
+                                label="Systolic"
+                                variant="outlined"
+                                required
+                                onChange={handleInputChange}
+                                value={formInputs.systolic}
+                                fullWidth />
+                        </Grid2>
+                        <Grid2 xs={12} sm={6} md={3}>
+                            <TextField
+                                id="diastolic"
+                                name="diastolic"
+                                label="Diastolic"
+                                variant="outlined"
+                                required
+                                onChange={handleInputChange}
+                                value={formInputs.diastolic}
+                                fullWidth />
+                        </Grid2>
+                        <Grid2 xs={12} sm={6} md={3}>
+                            <TextField
+                                id="creatinine"
+                                name="creatinine"
+                                label="Creatinine"
+                                variant="outlined"
+                                required
+                                onChange={handleInputChange}
+                                value={formInputs.creatinine}
+                                fullWidth />
+                        </Grid2>
+                        <Grid2 xs={12} sm={6} md={3}>
+                            <TextField
+                                id="uprotein"
+                                name="uprotein"
+                                label="Uprotein"
+                                variant="outlined"
+                                required
+                                onChange={handleInputChange}
+                                value={formInputs.uprotein}
+                                fullWidth />
+                        </Grid2>
+
+                        <Grid2 xs={12} sm={6} md={4}>
+                            <TextField
+                                select
+                                id="nbofbpmeds"
+                                name="nbofbpmeds"
+                                values={NBofBPmedsValues}
+                                defaultValue=""
+                                label="NBofBPmeds"
+                                variant="outlined"
+                                required
+                                onChange={handleInputChange}
+                                value={formInputs.nbofbpmeds}
+                                fullWidth>
+                                {
+                                    NBofBPmedsValues.map((option) => (
+                                        <MenuItem key={option.value} value={option.value}>
+                                            {option.label}
+                                        </MenuItem>
+                                    ))
+                                }
+                            </TextField>
+                        </Grid2>
+                        <Grid2 xs={12} sm={6} md={4}>
+                            <TextField
+                                select
+                                id="rasblockers"
+                                name="rasblockers"
+                                values={RASBlockersValues}
+                                label="RAS Blockers"
+                                defaultValue=""
+                                variant="outlined"
+                                required
+                                onChange={handleInputChange}
+                                value={formInputs.rasblockers}
+                                fullWidth>
+                                {
+                                    RASBlockersValues.map((option) => (
+                                        <MenuItem key={option.value} value={option.value}>
+                                            {option.label}
+                                        </MenuItem>
+                                    ))
+                                }
+                            </TextField>
+                        </Grid2>
+                        <Grid2 xs={12} sm={6} md={4}>
+                            <TextField
+                                select
+                                id="immunotherapies"
+                                name="immunotherapies"
+                                values={ImmunotherapiesValues}
+                                label="Immunotherapies"
+                                variant="outlined"
+                                defaultValue=""
+                                required
+                                onChange={handleInputChange}
+                                value={formInputs.immunotherapies}
+                                fullWidth>
+                                {
+                                    ImmunotherapiesValues.map((option) => (
+                                        <MenuItem key={option.value} value={option.value}>
+                                            {option.label}
+                                        </MenuItem>
+                                    ))
+                                }
+                            </TextField>
+                        </Grid2>
+                        <Grid2 xs={12} sm={12} style={{ display: 'flex', justifyContent: 'center' }}>
+                            <Button className="submit-button" disabled={disableButton} startIcon={<Iconify icon="charm:circle-tick" />} size="medium" variant="contained" onClick={saveBiopsia} sx={{ mt: '2rem' }}>Salva follow up</Button>
+                        </Grid2>
+                    </Grid2>
+                    {successAlert && <Alert severity="success" sx={{ mt: '2rem' }}>Follow up salvato con successo!</Alert>}
+                </Box>
+            </Modal >
 
         </>
     );
