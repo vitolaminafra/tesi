@@ -52,4 +52,18 @@ def getAllPazienti_logic():
         print(e)
         return 'ERR', 500
 
+def getPaziente_logic():
+    try:
+        data = request.json
 
+        print(data)
+
+        paziente = Paziente.query.filter_by(id=data.get('id')).first()
+
+        returnObj = json.dumps({"nome": paziente.nome, "cognome": paziente.cognome, "data": paziente.data.strftime("%d-%m-%Y"), "sesso": paziente.sesso})
+        
+        return returnObj, 200
+    
+    except Exception as e:
+        print(e)
+        return 'ERR', 500

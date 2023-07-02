@@ -1,14 +1,15 @@
 import PropTypes from 'prop-types';
 // @mui
 import { styled } from '@mui/material/styles';
-import { Box, Stack, AppBar, Toolbar, IconButton } from '@mui/material';
+import { Box, Stack, AppBar, Toolbar, Button } from '@mui/material';
 // utils
 import { bgBlur } from '../../../utils/cssStyles';
 // components
-import Iconify from '../../../components/iconify';
 //
 import AccountPopover from './AccountPopover';
+import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 
+import { useNavigate } from 'react-router-dom';
 
 // ----------------------------------------------------------------------
 
@@ -40,20 +41,24 @@ Header.propTypes = {
   onOpenNav: PropTypes.func,
 };
 
+
+
 export default function Header({ onOpenNav }) {
+  const navigate = useNavigate();
+
+
+  function goToPazientiPage() {
+    navigate('/pazienti');
+  }
   return (
-    <StyledRoot>
+    <StyledRoot style={{ width: '100%' }}>
       <StyledToolbar>
-        <IconButton
-          onClick={onOpenNav}
-          sx={{
-            mr: 1,
-            color: 'text.primary',
-            display: { lg: 'none' },
-          }}
-        >
-          <Iconify icon="eva:menu-2-fill" />
-        </IconButton>
+        {typeof window.location.pathname.split('/')[2] === 'string' &&
+          <Button variant="text" startIcon={<ArrowBackIosIcon />} onClick={() => goToPazientiPage()}>
+            Ritorna alla lista pazienti
+          </Button>
+        }
+
 
         <Box sx={{ flexGrow: 1 }} />
 

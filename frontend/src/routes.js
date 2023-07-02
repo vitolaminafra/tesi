@@ -7,6 +7,7 @@ import UserPage from './pages/UserPage';
 import LoginPage from './pages/LoginPage';
 import SignupPage from './pages/SignupPage';
 import Page404 from './pages/Page404';
+import PazientePage from './pages/PazientePage'
 
 
 // ----------------------------------------------------------------------
@@ -28,6 +29,10 @@ export default function Router() {
     {
       path: 'signup',
       element: <SignupPage />,
+    },
+    {
+      path: 'paziente/*',
+      element: <PazientePage />,
     },
     {
       element: <SimpleLayout />,

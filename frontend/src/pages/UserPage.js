@@ -191,6 +191,10 @@ export default function UserPage() {
       return <FemaleRoundedIcon />
   }
 
+  function goToPazientePage(id) {
+    navigate('/paziente/' + id);
+  }
+
   return (
     <>
       <Helmet>
@@ -243,7 +247,7 @@ export default function UserPage() {
                             </TableCell>
 
                           <TableCell align="right">
-                            <IconButton size="large" color="inherit">
+                            <IconButton size="large" color="inherit" onClick={() => goToPazientePage(row.id)}>
                               <Iconify icon={'octicon:chevron-right-16'} />
                             </IconButton>
                           </TableCell>
