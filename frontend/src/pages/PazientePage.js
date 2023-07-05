@@ -64,6 +64,36 @@ const theme = createTheme({
             dark: '#ffc8dd',
             contrastText: '#293241',
         },
+        m: {
+            light: '#ef476f',
+            main: '#ef476f',
+            dark: '#ef476f',
+            contrastText: '#fff',
+        },
+        e: {
+            light: '#ff7b00',
+            main: '#ff7b00',
+            dark: '#ff7b00',
+            contrastText: '#fff',
+        },
+        s: {
+            light: '#38b000',
+            main: '#38b000',
+            dark: '#38b000',
+            contrastText: '#000',
+        },
+        t: {
+            light: '#118ab2',
+            main: '#118ab2',
+            dark: '#118ab2',
+            contrastText: '#fff',
+        },
+        c: {
+            light: '#073b4c',
+            main: '#073b4c',
+            dark: '#073b4c',
+            contrastText: '#fff',
+        },
     },
 });
 // ----------------------------------------------------------------------
@@ -256,34 +286,34 @@ export default function PazientePage() {
             method: 'post',
             url: 'http://localhost:5000/add_biopsia',
             data: {
-              id_paziente: id,
-              data: dateValue.format("DD/MM/YYYY"),
-              m: formInputs.m,
-              e: formInputs.e,
-              s: formInputs.s,
-              t: formInputs.t,
-              c: formInputs.c,
+                id_paziente: id,
+                data: dateValue.format("DD/MM/YYYY"),
+                m: formInputs.m,
+                e: formInputs.e,
+                s: formInputs.s,
+                t: formInputs.t,
+                c: formInputs.c,
             }
-          }).then(function (response) {
+        }).then(function (response) {
             console.log(response);
             if (response.status === 200) {
-            
-              setSuccessAlert(true);
-              setDisableButton(true);
-      
-              setTimeout(() => {
-                handleCloseBiopsiaModal();
-                setDisableButton(false);
-                setSuccessAlert(false);
-      
-                resetFormInputs();
-                setDateValue(null);
-      
-              }, 3000);
+
+                setSuccessAlert(true);
+                setDisableButton(true);
+
+                setTimeout(() => {
+                    handleCloseBiopsiaModal();
+                    setDisableButton(false);
+                    setSuccessAlert(false);
+
+                    resetFormInputs();
+                    setDateValue(null);
+
+                }, 3000);
             }
-          }).catch(function (error) {
+        }).catch(function (error) {
             console.log(error);
-          });
+        });
 
     }
 
@@ -294,38 +324,38 @@ export default function PazientePage() {
             method: 'post',
             url: 'http://localhost:5000/add_followup',
             data: {
-              id_paziente: id,
-              data: dateValue.format("DD/MM/YYYY"),
-              altezza: formInputs.altezza,
-              peso: formInputs.peso,
-              systolic: formInputs.systolic,
-              diastolic: formInputs.diastolic,
-              creatinine: formInputs.creatinine,
-              uprotein: formInputs.uprotein,
-              nbofbpmeds: formInputs.nbofbpmeds,
-              ras: formInputs.rasblockers,
-              immunotherapies: formInputs.immunotherapies,
+                id_paziente: id,
+                data: dateValue.format("DD/MM/YYYY"),
+                altezza: formInputs.altezza,
+                peso: formInputs.peso,
+                systolic: formInputs.systolic,
+                diastolic: formInputs.diastolic,
+                creatinine: formInputs.creatinine,
+                uprotein: formInputs.uprotein,
+                nbofbpmeds: formInputs.nbofbpmeds,
+                ras: formInputs.rasblockers,
+                immunotherapies: formInputs.immunotherapies,
             }
-          }).then(function (response) {
+        }).then(function (response) {
             console.log(response);
             if (response.status === 200) {
-            
-              setSuccessAlert(true);
-              setDisableButton(true);
-      
-              setTimeout(() => {
-                handleCloseFollowUpModal();
-                setDisableButton(false);
-                setSuccessAlert(false);
-      
-                resetFormInputs();
-                setDateValue(null);
-      
-              }, 3000);
+
+                setSuccessAlert(true);
+                setDisableButton(true);
+
+                setTimeout(() => {
+                    handleCloseFollowUpModal();
+                    setDisableButton(false);
+                    setSuccessAlert(false);
+
+                    resetFormInputs();
+                    setDateValue(null);
+
+                }, 3000);
             }
-          }).catch(function (error) {
+        }).catch(function (error) {
             console.log(error);
-          });
+        });
 
     }
 
@@ -381,13 +411,9 @@ export default function PazientePage() {
                                 <Typography variant="body" sx={{ color: 'text.secondary' }} style={{ display: 'block' }}>{'Data di nascita: ' + paziente.data}</Typography>
                             </div>
                         </div>
-                        <div style={{ display: 'flex', gap: '1rem', justifyContent: 'flex-end', height: 'fit-content', flexDirection: 'column' }}>
-                            <Button variant="outlined">Vedi biopsia</Button>
-                            <Button variant="outlined">Vedi follow up</Button>
-                        </div>
                     </div>
 
-                    <Divider style={{ marginTop: '1rem' }} />
+                    <Divider style={{ marginTop: '1rem', marginBottom: '1rem' }} />
                     {/* <AppWebsiteVisits
                         title="Previsione"
                         subheader="(+43%) than last year"
@@ -425,6 +451,32 @@ export default function PazientePage() {
                             },
                         ]}
                     /> */}
+
+                    <Typography variant='h6' gutterBottom>Biopsia</Typography>
+                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                        <Typography variant="body" sx={{ color: 'text.secondary' }} style={{ display: 'inline' }}>Svolta in data 20/05/2023</Typography>
+                        <div style={{ display: 'inline-block' }}>
+                            <div style={{ display: 'flex', gap: '1.5rem' }}>
+                                <ThemeProvider theme={theme}>
+                                    <Chip variant="outlined" color="m" label="Si" icon={<Iconify icon="tabler:circle-letter-m" />} />
+
+                                    <Chip variant="outlined" color="e" label="Si" icon={<Iconify icon="tabler:circle-letter-e" />} />
+
+                                    <Chip variant="outlined" color="s" label="Si" icon={<Iconify icon="tabler:circle-letter-s" />} />
+
+                                    <Chip variant="outlined" color="t" label="1" icon={<Iconify icon="tabler:circle-letter-t" />} />
+
+                                    <Chip variant="outlined" color="c" label="Si" icon={<Iconify icon="tabler:circle-letter-c" />} />
+                                </ThemeProvider>
+                            </div>
+                        </div>
+                    </div>
+
+                    <Divider style={{ marginTop: '1rem', marginBottom: '1rem' }} />
+
+                    <Typography variant='h6' gutterBottom>Tutti i follow up</Typography>
+                    
+
                 </Card>
             </Container>
 
@@ -608,7 +660,7 @@ export default function PazientePage() {
                                         setDateValue(newValue);
                                     }}
                                     slotProps={{ textField: { fullWidth: true } }} />
-                                    
+
                             </LocalizationProvider>
                         </Grid2>
                         <Grid2 xs={12} sm={6} md={4}>
@@ -639,7 +691,7 @@ export default function PazientePage() {
                                     endAdornment: <InputAdornment position="end">kg</InputAdornment>
                                 }} />
                         </Grid2>
-                        
+
                         <Grid2 xs={12} sm={6} md={3}>
                             <TextField
                                 id="systolic"
