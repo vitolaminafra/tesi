@@ -89,9 +89,22 @@ def addBiopsia_logic():
     
 def addFollowup_logic():
     try:
+        data = request.json
 
-        return "", 200
-    
+        id_paziente = data.get('id_paziente')
+
+        date_formatted = datetime.strptime(data.get('data'),'%d/%m/%Y')
+
+        followup = Followup(data = date_formatted, altezza = data.get('altezza'), peso = data.get('peso'), 
+                            systolic = data.get('systolic'), diastolic = data.get('diastolic'), creatinine = data.get('creatinine'),
+                             uprotein = data.get('uprotein'), nbofbpmeds = data.get('nbofbpmeds'), ras = data.get('ras'),
+                              immunotherapies = data.get('immunotherapies'), id_paziente = id_paziente)
+
+        db.session.add(followup)
+        db.session.commit()
+        
+        return 'OK', 200
+
     except Exception as e:
         print(e)
         return 'ERR', 500

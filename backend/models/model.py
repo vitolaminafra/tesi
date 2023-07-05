@@ -45,6 +45,6 @@ class Followup(db.Model):
     uprotein = db.Column(db.Float)
     nbofbpmeds = db.Column(db.Integer)
     ras = db.Column(db.Integer)
-    immunitherapies = db.Column(db.Boolean)
+    immunotherapies = db.Column(db.Boolean)
     id_paziente = db.Column(db.Integer, db.ForeignKey('paziente.id'))
 

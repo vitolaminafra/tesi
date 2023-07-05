@@ -296,15 +296,15 @@ export default function PazientePage() {
             data: {
               id_paziente: id,
               data: dateValue.format("DD/MM/YYYY"),
-              altezza: formInputs.m,
-              peso: formInputs.e,
-              systolic: formInputs.s,
-              diastolic: formInputs.t,
-              creatinine: formInputs.c,
-              uprotein: formInputs.c,
-              nbofbpmeds: formInputs.c,
-              ras: formInputs.c,
-              immunotherapies: formInputs.c,
+              altezza: formInputs.altezza,
+              peso: formInputs.peso,
+              systolic: formInputs.systolic,
+              diastolic: formInputs.diastolic,
+              creatinine: formInputs.creatinine,
+              uprotein: formInputs.uprotein,
+              nbofbpmeds: formInputs.nbofbpmeds,
+              ras: formInputs.rasblockers,
+              immunotherapies: formInputs.immunotherapies,
             }
           }).then(function (response) {
             console.log(response);
@@ -448,7 +448,7 @@ export default function PazientePage() {
                             <LocalizationProvider dateAdapter={AdapterMoment}>
                                 <DesktopDatePicker
                                     label="Data biopsia"
-                                    inputFormat="DD/MM/YYYY"
+                                    format='DD/MM/YYYY'
                                     name="birth_date"
                                     value={dateValue}
                                     onChange={(newValue) => {
@@ -599,10 +599,10 @@ export default function PazientePage() {
                         <Grid2 xs={12} sm={6} md={4}>
                             <LocalizationProvider dateAdapter={AdapterMoment}>
                                 <DesktopDatePicker
-                                    id="ass_date"
-                                    name="ass_date"
+                                    id="date"
+                                    name="date"
                                     label="Data follow up"
-                                    inputFormat="DD/MM/YYYY"
+                                    format='DD/MM/YYYY'
                                     value={dateValue}
                                     onChange={(newValue) => {
                                         setDateValue(newValue);
@@ -613,8 +613,8 @@ export default function PazientePage() {
                         </Grid2>
                         <Grid2 xs={12} sm={6} md={4}>
                             <TextField
-                                id="height"
-                                name="height"
+                                id="altezza"
+                                name="altezza"
                                 label="Altezza"
                                 variant="outlined"
                                 required
@@ -627,8 +627,8 @@ export default function PazientePage() {
                         </Grid2>
                         <Grid2 xs={12} sm={6} md={4}>
                             <TextField
-                                id="weight"
-                                name="weight"
+                                id="peso"
+                                name="peso"
                                 label="Peso"
                                 variant="outlined"
                                 required
