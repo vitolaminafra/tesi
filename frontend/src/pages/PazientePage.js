@@ -108,30 +108,30 @@ export default function PazientePage() {
     const MValues = [
         {
             value: false,
-            label: '0'
+            label: 'No'
         }, {
             value: true,
-            label: '1'
+            label: 'Si'
         }
     ];
 
     const EValues = [
         {
             value: false,
-            label: '0'
+            label: 'No'
         }, {
             value: true,
-            label: '1'
+            label: 'Si'
         }
     ];
 
     const SValues = [
         {
             value: false,
-            label: '0'
+            label: 'No'
         }, {
             value: true,
-            label: '1'
+            label: 'Si'
         }
     ];
 
@@ -151,10 +151,10 @@ export default function PazientePage() {
     const CValues = [
         {
             value: false,
-            label: '0'
+            label: 'No'
         }, {
             value: true,
-            label: '1'
+            label: 'Si'
         }
     ];
 
@@ -211,10 +211,10 @@ export default function PazientePage() {
     const ImmunotherapiesValues = [
         {
             value: false,
-            label: '0'
+            label: 'No'
         }, {
             value: true,
-            label: '1'
+            label: 'Si'
         }
     ];
 
@@ -250,6 +250,82 @@ export default function PazientePage() {
     }
 
     function saveBiopsia() {
+        let id = window.location.pathname.split('/')[2];
+
+        axios({
+            method: 'post',
+            url: 'http://localhost:5000/add_biopsia',
+            data: {
+              id_paziente: id,
+              data: dateValue.format("DD/MM/YYYY"),
+              m: formInputs.m,
+              e: formInputs.e,
+              s: formInputs.s,
+              t: formInputs.t,
+              c: formInputs.c,
+            }
+          }).then(function (response) {
+            console.log(response);
+            if (response.status === 200) {
+            
+              setSuccessAlert(true);
+              setDisableButton(true);
+      
+              setTimeout(() => {
+                handleCloseBiopsiaModal();
+                setDisableButton(false);
+                setSuccessAlert(false);
+      
+                resetFormInputs();
+                setDateValue(null);
+      
+              }, 3000);
+            }
+          }).catch(function (error) {
+            console.log(error);
+          });
+
+    }
+
+    function saveFollowup() {
+        let id = window.location.pathname.split('/')[2];
+
+        axios({
+            method: 'post',
+            url: 'http://localhost:5000/add_followup',
+            data: {
+              id_paziente: id,
+              data: dateValue.format("DD/MM/YYYY"),
+              altezza: formInputs.m,
+              peso: formInputs.e,
+              systolic: formInputs.s,
+              diastolic: formInputs.t,
+              creatinine: formInputs.c,
+              uprotein: formInputs.c,
+              nbofbpmeds: formInputs.c,
+              ras: formInputs.c,
+              immunotherapies: formInputs.c,
+            }
+          }).then(function (response) {
+            console.log(response);
+            if (response.status === 200) {
+            
+              setSuccessAlert(true);
+              setDisableButton(true);
+      
+              setTimeout(() => {
+                handleCloseFollowUpModal();
+                setDisableButton(false);
+                setSuccessAlert(false);
+      
+                resetFormInputs();
+                setDateValue(null);
+      
+              }, 3000);
+            }
+          }).catch(function (error) {
+            console.log(error);
+          });
 
     }
 
@@ -312,7 +388,7 @@ export default function PazientePage() {
                     </div>
 
                     <Divider style={{ marginTop: '1rem' }} />
-                    <AppWebsiteVisits
+                    {/* <AppWebsiteVisits
                         title="Previsione"
                         subheader="(+43%) than last year"
                         chartLabels={[
@@ -348,7 +424,7 @@ export default function PazientePage() {
                                 data: [30, 25, 36, 30, 45, 35, 64, 52, 59, 36, 39],
                             },
                         ]}
-                    />
+                    /> */}
                 </Card>
             </Container>
 
@@ -497,10 +573,10 @@ export default function PazientePage() {
                         </Grid2>
 
                         <Grid2 xs={12} sm={12} style={{ display: 'flex', justifyContent: 'center' }}>
-                            <Button className="submit-button" disabled={disableButton} startIcon={<Iconify icon="charm:circle-tick" />} size="medium" variant="contained" onClick={saveBiopsia} sx={{ mt: '2rem' }}>Salva paziente</Button>
+                            <Button className="submit-button" disabled={disableButton} startIcon={<Iconify icon="charm:circle-tick" />} size="medium" variant="contained" onClick={saveBiopsia} sx={{ mt: '2rem' }}>Salva biopsia</Button>
                         </Grid2>
                     </Grid2>
-                    {successAlert && <Alert severity="success" sx={{ mt: '2rem' }}>Dati del biopsia salvati con successo!</Alert>}
+                    {successAlert && <Alert severity="success" sx={{ mt: '2rem' }}>Dati della biopsia salvati con successo!</Alert>}
                 </Box>
             </Modal >
 
@@ -676,7 +752,7 @@ export default function PazientePage() {
                             </TextField>
                         </Grid2>
                         <Grid2 xs={12} sm={12} style={{ display: 'flex', justifyContent: 'center' }}>
-                            <Button className="submit-button" disabled={disableButton} startIcon={<Iconify icon="charm:circle-tick" />} size="medium" variant="contained" onClick={saveBiopsia} sx={{ mt: '2rem' }}>Salva follow up</Button>
+                            <Button className="submit-button" disabled={disableButton} startIcon={<Iconify icon="charm:circle-tick" />} size="medium" variant="contained" onClick={saveFollowup} sx={{ mt: '2rem' }}>Salva follow up</Button>
                         </Grid2>
                     </Grid2>
                     {successAlert && <Alert severity="success" sx={{ mt: '2rem' }}>Follow up salvato con successo!</Alert>}

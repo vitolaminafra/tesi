@@ -1,4 +1,4 @@
-from models.model import Paziente, Medico, db
+from models.model import Paziente, Medico, Biopsia, Followup, db
 from flask import request, jsonify
 from datetime import datetime
 import json
@@ -67,3 +67,32 @@ def getPaziente_logic():
     except Exception as e:
         print(e)
         return 'ERR', 500
+
+def addBiopsia_logic():
+    try:
+        data = request.json
+
+        id_paziente = data.get('id_paziente')
+
+        date_formatted = datetime.strptime(data.get('data'),'%d/%m/%Y')
+
+        biopsia = Biopsia(data = date_formatted, m = data.get('m'), e = data.get('e'), s = data.get('s'), t = data.get('t'), c = data.get('c'), id_paziente = id_paziente)
+
+        db.session.add(biopsia)
+        db.session.commit()
+        
+        return 'OK', 200
+
+    except Exception as e:
+        print(e)
+        return 'ERR', 500
+    
+def addFollowup_logic():
+    try:
+
+        return "", 200
+    
+    except Exception as e:
+        print(e)
+        return 'ERR', 500
+
