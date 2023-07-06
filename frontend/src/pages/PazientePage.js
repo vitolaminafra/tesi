@@ -135,6 +135,9 @@ export default function PazientePage() {
     const [paziente, setPaziente] = useState({});
     const [loaded, setLoaded] = useState(false);
 
+    const [biopsia, setBiopsia] = useState({});
+    const [isBiopsia, setIsBiopsia] = useState(false);
+
     const MValues = [
         {
             value: false,
@@ -255,6 +258,8 @@ export default function PazientePage() {
 
         getPaziente();
 
+        getBiopsia();
+
     }, []);
 
     function getPaziente() {
@@ -267,7 +272,7 @@ export default function PazientePage() {
                 id: id
             }
         }).then(function (response) {
-            console.log(response);
+            
             if (response.status === 200) {
                 setPaziente(response.data);
 
@@ -278,6 +283,29 @@ export default function PazientePage() {
             console.log(error);
         });
     }
+
+    function getBiopsia() {
+        let id = window.location.pathname.split('/')[2];
+
+        axios({
+            method: 'post',
+            url: 'http://localhost:5000/get_biopsia',
+            data: {
+                id: id
+            }
+        }).then(function (response) {
+            if (response.status === 200) {
+                
+                setBiopsia(response.data);
+
+                setIsBiopsia(true);
+
+            }
+        }).catch(function (error) {
+            console.log(error);
+        });
+    }
+
 
     function saveBiopsia() {
         let id = window.location.pathname.split('/')[2];
@@ -295,11 +323,13 @@ export default function PazientePage() {
                 c: formInputs.c,
             }
         }).then(function (response) {
-            console.log(response);
+            
             if (response.status === 200) {
 
                 setSuccessAlert(true);
                 setDisableButton(true);
+                
+                getBiopsia();
 
                 setTimeout(() => {
                     handleCloseBiopsiaModal();
@@ -337,7 +367,7 @@ export default function PazientePage() {
                 immunotherapies: formInputs.immunotherapies,
             }
         }).then(function (response) {
-            console.log(response);
+            
             if (response.status === 200) {
 
                 setSuccessAlert(true);
@@ -373,6 +403,12 @@ export default function PazientePage() {
             return <FemaleRoundedIcon />
     }
 
+    function getBooleanString(bool) {
+        if(bool)
+            return 'Si';
+        else
+            return 'No';
+    }
 
     return (
         <>
@@ -388,9 +424,11 @@ export default function PazientePage() {
                         Dettagli paziente
                     </Typography>
                     <div style={{ display: 'flex', gap: '1rem' }}>
+                        { !isBiopsia && 
                         <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />} onClick={handleOpenBiopsiaModal}>
                             Aggiungi biopsia
-                        </Button>
+                        </Button> 
+                        }
                         <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />} onClick={handleOpenFollowUpModal}>
                             Aggiungi follow up
                         </Button>
@@ -408,7 +446,7 @@ export default function PazientePage() {
                                         <Chip label={getSexString(paziente.sesso)} icon={getSexIcon(paziente.sesso)} color={paziente.sesso}></Chip >
                                     </ThemeProvider>
                                 </div>
-                                <Typography variant="body" sx={{ color: 'text.secondary' }} style={{ display: 'block' }}>{'Data di nascita: ' + paziente.data}</Typography>
+                                <Typography variant="body" sx={{ color: 'text.secondary' }} style={{ display: 'block' }}>Data di nascita: <b>{ paziente.data }</b></Typography>
                             </div>
                         </div>
                     </div>
@@ -453,25 +491,34 @@ export default function PazientePage() {
                     /> */}
 
                     <Typography variant='h6' gutterBottom>Biopsia</Typography>
+                    { isBiopsia && 
                     <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                        <Typography variant="body" sx={{ color: 'text.secondary' }} style={{ display: 'inline' }}>Svolta in data 20/05/2023</Typography>
+                        <Typography variant="body" sx={{ color: 'text.secondary' }} style={{ display: 'inline' }}>Svolta in data  <b>{ biopsia.data }</b></Typography>
                         <div style={{ display: 'inline-block' }}>
                             <div style={{ display: 'flex', gap: '1.5rem' }}>
                                 <ThemeProvider theme={theme}>
-                                    <Chip variant="outlined" color="m" label="Si" icon={<Iconify icon="tabler:circle-letter-m" />} />
+                                    <Chip variant="outlined" color="m" label={getBooleanString(biopsia.m)} icon={<Iconify icon="tabler:circle-letter-m" />} />
 
-                                    <Chip variant="outlined" color="e" label="Si" icon={<Iconify icon="tabler:circle-letter-e" />} />
+                                    <Chip variant="outlined" color="e" label={getBooleanString(biopsia.e)} icon={<Iconify icon="tabler:circle-letter-e" />} />
 
-                                    <Chip variant="outlined" color="s" label="Si" icon={<Iconify icon="tabler:circle-letter-s" />} />
+                                    <Chip variant="outlined" color="s" label={getBooleanString(biopsia.s)} icon={<Iconify icon="tabler:circle-letter-s" />} />
 
-                                    <Chip variant="outlined" color="t" label="1" icon={<Iconify icon="tabler:circle-letter-t" />} />
+                                    <Chip variant="outlined" color="t" label={biopsia.t} icon={<Iconify icon="tabler:circle-letter-t" />} />
 
-                                    <Chip variant="outlined" color="c" label="Si" icon={<Iconify icon="tabler:circle-letter-c" />} />
+                                    <Chip variant="outlined" color="c" label={getBooleanString(biopsia.c)} icon={<Iconify icon="tabler:circle-letter-c" />} />
                                 </ThemeProvider>
                             </div>
                         </div>
                     </div>
+                    }
 
+                    { !isBiopsia && 
+                    
+                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <Typography variant="body" sx={{ color: 'text.secondary' }} style={{ display: 'inline' }}>Dati relativi alla biopsia non ancora inseriti</Typography>
+                    </div>
+                    
+                    }
                     <Divider style={{ marginTop: '1rem', marginBottom: '1rem' }} />
 
                     <Typography variant='h6' gutterBottom>Tutti i follow up</Typography>

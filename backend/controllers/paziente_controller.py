@@ -1,4 +1,4 @@
-from services.paziente_service import savePaziente_logic, getAllPazienti_logic, getPaziente_logic, addBiopsia_logic, addFollowup_logic
+from services.paziente_service import savePaziente_logic, getAllPazienti_logic, getPaziente_logic, addBiopsia_logic, addFollowup_logic, getBiopsia_logic
 
 def savePaziente():
     return savePaziente_logic()
@@ -14,3 +14,6 @@ def addBiopsia():
 
 def addFollowup():
     return addFollowup_logic()
+
+def getBiopsia():
+    return getBiopsia_logic()

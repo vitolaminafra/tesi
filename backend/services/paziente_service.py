@@ -109,3 +109,17 @@ def addFollowup_logic():
         print(e)
         return 'ERR', 500
 
+def getBiopsia_logic():
+    try:
+        data = request.json
+
+        biopsia = Biopsia.query.filter_by(id_paziente=data.get('id')).first()
+
+        returnObj = json.dumps({"data": biopsia.data.strftime("%d-%m-%Y"), "m": biopsia.m, "e": biopsia.e, 
+                                "s": biopsia.s, "t": biopsia.t, "c": biopsia.c})
+        
+        return returnObj, 200
+    
+    except Exception as e:
+        print(e)
+        return 'ERR', 500

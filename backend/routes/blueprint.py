@@ -1,7 +1,7 @@
 from flask import Blueprint
 from controllers.app_controller import index, create
 from controllers.medico_controller import signup, login, getMedicoInfo
-from controllers.paziente_controller import savePaziente, getAllPazienti, getPaziente, addBiopsia, addFollowup
+from controllers.paziente_controller import savePaziente, getAllPazienti, getPaziente, addBiopsia, addFollowup, getBiopsia
 
 blueprint = Blueprint('blueprint', __name__)
 
@@ -15,5 +15,7 @@ blueprint.route('/medico', methods=['POST'])(getMedicoInfo)
 blueprint.route('/save_paziente', methods=['POST'])(savePaziente)
 blueprint.route('/all_pazienti', methods=['POST'])(getAllPazienti)
 blueprint.route('/paziente', methods=['POST'])(getPaziente)
+
 blueprint.route('/add_biopsia', methods=['POST'])(addBiopsia)
 blueprint.route('/add_followup', methods=['POST'])(addFollowup)
+blueprint.route('/get_biopsia', methods=['POST'])(getBiopsia)
