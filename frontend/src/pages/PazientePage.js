@@ -20,11 +20,22 @@ import {
     Box,
     Alert,
     Chip,
-    Divider
+    Divider,
+    List,
+    Paper,
+    Checkbox,
+    ListItemButton,
+    ListItemIcon,
+    ListItemText,
+    Collapse
+
 } from '@mui/material';
-import {
-    AppWebsiteVisits,
-} from '../sections/@dashboard/app';
+import InboxIcon from '@mui/icons-material/MoveToInbox';
+import DraftsIcon from '@mui/icons-material/Drafts';
+import SendIcon from '@mui/icons-material/Send';
+import ExpandLess from '@mui/icons-material/ExpandLess';
+import ExpandMore from '@mui/icons-material/ExpandMore';
+import StarBorder from '@mui/icons-material/StarBorder';
 // components
 import Iconify from '../components/iconify';
 // sections
@@ -49,6 +60,7 @@ import axios from 'axios';
 
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import Header from 'src/layouts/dashboard/header';
+import { identity } from 'lodash';
 
 const theme = createTheme({
     palette: {
@@ -137,6 +149,21 @@ export default function PazientePage() {
 
     const [biopsia, setBiopsia] = useState({});
     const [isBiopsia, setIsBiopsia] = useState(false);
+
+    const [followup, setFollowup] = useState({});
+    const [followupSize, setFollowupSize] = useState(0);
+    const [followupLoaded, setFollowupLoaded] = useState(false);
+
+    const [open, setOpen] = useState({});
+
+    const handleClick = (id) => {
+        let o = new Map();
+    
+        o.set(id, !open.get(id));
+        
+        setOpen(o);
+
+    };
 
     const MValues = [
         {
@@ -252,6 +279,8 @@ export default function PazientePage() {
     ];
 
     useEffect(() => {
+        document.body.style.overflow = 'hidden';
+
         if (localStorage.getItem("user") === null) {
             navigate('/login');
         }
@@ -259,6 +288,8 @@ export default function PazientePage() {
         getPaziente();
 
         getBiopsia();
+
+        getFollowup();
 
     }, []);
 
@@ -272,11 +303,9 @@ export default function PazientePage() {
                 id: id
             }
         }).then(function (response) {
-            
+
             if (response.status === 200) {
                 setPaziente(response.data);
-
-                setLoaded(true);
 
             }
         }).catch(function (error) {
@@ -295,7 +324,7 @@ export default function PazientePage() {
             }
         }).then(function (response) {
             if (response.status === 200) {
-                
+
                 setBiopsia(response.data);
 
                 setIsBiopsia(true);
@@ -323,12 +352,12 @@ export default function PazientePage() {
                 c: formInputs.c,
             }
         }).then(function (response) {
-            
+
             if (response.status === 200) {
 
                 setSuccessAlert(true);
                 setDisableButton(true);
-                
+
                 getBiopsia();
 
                 setTimeout(() => {
@@ -363,15 +392,17 @@ export default function PazientePage() {
                 creatinine: formInputs.creatinine,
                 uprotein: formInputs.uprotein,
                 nbofbpmeds: formInputs.nbofbpmeds,
-                ras: formInputs.rasblockers,
+                rasblockers: formInputs.rasblockers,
                 immunotherapies: formInputs.immunotherapies,
             }
         }).then(function (response) {
-            
+
             if (response.status === 200) {
 
                 setSuccessAlert(true);
                 setDisableButton(true);
+
+                getFollowup();
 
                 setTimeout(() => {
                     handleCloseFollowUpModal();
@@ -389,6 +420,35 @@ export default function PazientePage() {
 
     }
 
+    function getFollowup() {
+        let id = window.location.pathname.split('/')[2];
+
+        axios({
+            method: 'post',
+            url: 'http://localhost:5000/get_followup',
+            data: {
+                id: id
+            }
+        }).then(function (response) {
+            if (response.status === 200) {
+                setFollowup(response.data);
+                setFollowupSize(Object.entries(followup).length)
+
+                let opens = new Map();
+                response.data.forEach( fu => {
+                    opens.set(fu.id, false);
+                })
+
+                setOpen(opens);
+
+                setFollowupLoaded(true);
+
+            }
+        }).catch(function (error) {
+            console.log(error);
+        });
+    }
+
     function getSexString(sex) {
         if (sex === 'male')
             return 'Maschio'
@@ -404,7 +464,7 @@ export default function PazientePage() {
     }
 
     function getBooleanString(bool) {
-        if(bool)
+        if (bool)
             return 'Si';
         else
             return 'No';
@@ -424,10 +484,10 @@ export default function PazientePage() {
                         Dettagli paziente
                     </Typography>
                     <div style={{ display: 'flex', gap: '1rem' }}>
-                        { !isBiopsia && 
-                        <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />} onClick={handleOpenBiopsiaModal}>
-                            Aggiungi biopsia
-                        </Button> 
+                        {!isBiopsia &&
+                            <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />} onClick={handleOpenBiopsiaModal}>
+                                Aggiungi biopsia
+                            </Button>
                         }
                         <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />} onClick={handleOpenFollowUpModal}>
                             Aggiungi follow up
@@ -446,7 +506,7 @@ export default function PazientePage() {
                                         <Chip label={getSexString(paziente.sesso)} icon={getSexIcon(paziente.sesso)} color={paziente.sesso}></Chip >
                                     </ThemeProvider>
                                 </div>
-                                <Typography variant="body" sx={{ color: 'text.secondary' }} style={{ display: 'block' }}>Data di nascita: <b>{ paziente.data }</b></Typography>
+                                <Typography variant="body" sx={{ color: 'text.secondary' }} style={{ display: 'block' }}>Data di nascita: <b>{paziente.data}</b></Typography>
                             </div>
                         </div>
                     </div>
@@ -491,38 +551,89 @@ export default function PazientePage() {
                     /> */}
 
                     <Typography variant='h6' gutterBottom>Biopsia</Typography>
-                    { isBiopsia && 
-                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                        <Typography variant="body" sx={{ color: 'text.secondary' }} style={{ display: 'inline' }}>Svolta in data  <b>{ biopsia.data }</b></Typography>
-                        <div style={{ display: 'inline-block' }}>
-                            <div style={{ display: 'flex', gap: '1.5rem' }}>
-                                <ThemeProvider theme={theme}>
-                                    <Chip variant="outlined" color="m" label={getBooleanString(biopsia.m)} icon={<Iconify icon="tabler:circle-letter-m" />} />
+                    {isBiopsia &&
+                        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                            <Typography variant="body" sx={{ color: 'text.secondary' }} style={{ display: 'inline' }}>Svolta in data  <b>{biopsia.data}</b></Typography>
+                            <div style={{ display: 'inline-block' }}>
+                                <div style={{ display: 'flex', gap: '1.5rem' }}>
+                                    <ThemeProvider theme={theme}>
+                                        <Chip variant="outlined" color="m" label={getBooleanString(biopsia.m)} icon={<Iconify icon="tabler:circle-letter-m" />} />
 
-                                    <Chip variant="outlined" color="e" label={getBooleanString(biopsia.e)} icon={<Iconify icon="tabler:circle-letter-e" />} />
+                                        <Chip variant="outlined" color="e" label={getBooleanString(biopsia.e)} icon={<Iconify icon="tabler:circle-letter-e" />} />
 
-                                    <Chip variant="outlined" color="s" label={getBooleanString(biopsia.s)} icon={<Iconify icon="tabler:circle-letter-s" />} />
+                                        <Chip variant="outlined" color="s" label={getBooleanString(biopsia.s)} icon={<Iconify icon="tabler:circle-letter-s" />} />
 
-                                    <Chip variant="outlined" color="t" label={biopsia.t} icon={<Iconify icon="tabler:circle-letter-t" />} />
+                                        <Chip variant="outlined" color="t" label={biopsia.t} icon={<Iconify icon="tabler:circle-letter-t" />} />
 
-                                    <Chip variant="outlined" color="c" label={getBooleanString(biopsia.c)} icon={<Iconify icon="tabler:circle-letter-c" />} />
-                                </ThemeProvider>
+                                        <Chip variant="outlined" color="c" label={getBooleanString(biopsia.c)} icon={<Iconify icon="tabler:circle-letter-c" />} />
+                                    </ThemeProvider>
+                                </div>
                             </div>
                         </div>
-                    </div>
                     }
 
-                    { !isBiopsia && 
-                    
-                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <Typography variant="body" sx={{ color: 'text.secondary' }} style={{ display: 'inline' }}>Dati relativi alla biopsia non ancora inseriti</Typography>
-                    </div>
-                    
+                    {!isBiopsia &&
+
+                        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                            <Typography variant="body" sx={{ color: 'text.secondary' }} style={{ display: 'inline' }}>Dati relativi alla biopsia non ancora inseriti</Typography>
+                        </div>
+
                     }
                     <Divider style={{ marginTop: '1rem', marginBottom: '1rem' }} />
 
                     <Typography variant='h6' gutterBottom>Tutti i follow up</Typography>
-                    
+                    <Typography variant="body" sx={{ color: 'text.secondary' }} style={{ display: 'inline' }}>Seleziona i follow up per la predizione</Typography>
+                    <Paper sx={{ maxHeight: '35vh', overflow: 'auto' }}>
+                        <List sx={{ width: '100%' }}>
+                            {followupLoaded && followup.map((row) => {
+                                return (
+                                    <div>
+                                        <ListItemButton disableRipple>
+                                            <ListItemIcon>
+                                                <Checkbox
+                                                    edge="start"
+                                                    disableRipple
+                                                />
+                                            </ListItemIcon>
+                                            <span style={{ display: 'contents' }} onClick={() => handleClick(row.id)}>
+                                                <ListItemText primary={"Follow up del " + row.data}/>
+                                                {open.get(row.id) ? <ExpandLess /> : <ExpandMore />}
+                                            </span>
+                                        </ListItemButton>
+                                        <Collapse in={open.get(row.id)} timeout="auto" unmountOnExit>
+                                            <div style={{ marginLeft: '4.5rem' }}>
+                                                <div style={{ display: 'flex', gap: '1rem', marginBottom: '0.3rem' }}>
+                                                    <Typography variant="body" sx={{ color: 'text.secondary' }} style={{ display: 'inline' }}><b>Altezza:</b> {row.altezza}cm</Typography>
+                                                    <Typography variant="body" sx={{ color: 'text.secondary' }} style={{ display: 'inline' }}> - </Typography>
+                                                    <Typography variant="body" sx={{ color: 'text.secondary' }} style={{ display: 'inline' }}><b>Peso:</b> {row.peso}kg</Typography>
+                                                </div>
+                                                <div style={{ display: 'flex', gap: '1rem', marginBottom: '0.3rem' }}>
+                                                    <Typography variant="body" sx={{ color: 'text.secondary' }} style={{ display: 'inline' }}><b>Systolic:</b> {row.systolic}</Typography>
+                                                    <Typography variant="body" sx={{ color: 'text.secondary' }} style={{ display: 'inline' }}> - </Typography>
+                                                    <Typography variant="body" sx={{ color: 'text.secondary' }} style={{ display: 'inline' }}><b>Diastolic:</b> {row.diastolic}</Typography>
+                                                    <Typography variant="body" sx={{ color: 'text.secondary' }} style={{ display: 'inline' }}> - </Typography>
+                                                    <Typography variant="body" sx={{ color: 'text.secondary' }} style={{ display: 'inline' }}><b>Creatinine:</b> {row.creatinine}</Typography>
+                                                    <Typography variant="body" sx={{ color: 'text.secondary' }} style={{ display: 'inline' }}> - </Typography>
+                                                    <Typography variant="body" sx={{ color: 'text.secondary' }} style={{ display: 'inline' }}><b>Uprotein:</b> {row.uprotein}</Typography>
+                                                </div>
+                                                <div style={{ display: 'flex', gap: '1rem', marginBottom: '0.3rem' }}>
+                                                    <Typography variant="body" sx={{ color: 'text.secondary' }} style={{ display: 'inline' }}><b>NBofBPmeds:</b> {row.nbofbpmeds}</Typography>
+                                                    <Typography variant="body" sx={{ color: 'text.secondary' }} style={{ display: 'inline' }}> - </Typography>
+                                                    <Typography variant="body" sx={{ color: 'text.secondary' }} style={{ display: 'inline' }}><b>Ras Blockers:</b> {row.ras}</Typography>
+                                                    <Typography variant="body" sx={{ color: 'text.secondary' }} style={{ display: 'inline' }}> - </Typography>
+                                                    <Typography variant="body" sx={{ color: 'text.secondary' }} style={{ display: 'inline' }}><b>Immunotherapies:</b> {getBooleanString(row.immunotherapies)}</Typography>
+                                                </div>
+                                            </div>
+                                        </Collapse>
+                                    </div>
+
+                                )
+                            })}
+
+                        </List>
+
+                    </Paper>
+
 
                 </Card>
             </Container>

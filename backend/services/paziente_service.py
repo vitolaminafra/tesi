@@ -123,3 +123,35 @@ def getBiopsia_logic():
     except Exception as e:
         print(e)
         return 'ERR', 500
+    
+def getFollowup_logic():
+    try:
+        data = request.json
+
+        followups = Followup.query.filter_by(id_paziente=data.get('id')).all()
+
+        output = []
+
+        for followup in followups :
+            fu = {}
+            fu['id'] = followup.id
+            fu['data'] = followup.data.strftime("%d-%m-%Y")
+            fu['altezza'] = followup.altezza
+            fu['peso'] = followup.peso
+            fu['systolic'] = followup.systolic
+            fu['diastolic'] = followup.diastolic
+            fu['creatinine'] = followup.creatinine
+            fu['uprotein'] = followup.uprotein
+            fu['nbofbpmeds'] = followup.nbofbpmeds
+            fu['ras'] = followup.ras
+            fu['immunotherapies'] = followup.immunotherapies
+
+            output.append(fu)
+
+        output = json.dumps(output)
+        
+        return output, 200
+
+    except Exception as e:
+        print(e)
+        return 'ERR', 500
