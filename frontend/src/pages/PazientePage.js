@@ -165,6 +165,10 @@ export default function PazientePage() {
 
     };
 
+    const checkboxClick = (e) => {
+        e.stopPropagation();
+    }
+
     const MValues = [
         {
             value: false,
@@ -557,15 +561,15 @@ export default function PazientePage() {
                             <div style={{ display: 'inline-block' }}>
                                 <div style={{ display: 'flex', gap: '1.5rem' }}>
                                     <ThemeProvider theme={theme}>
-                                        <Chip variant="outlined" color="m" label={getBooleanString(biopsia.m)} icon={<Iconify icon="tabler:circle-letter-m" />} />
+                                        <Chip variant="outlined" color="primary" label={getBooleanString(biopsia.m)} icon={<Iconify icon="tabler:circle-letter-m" />} />
 
-                                        <Chip variant="outlined" color="e" label={getBooleanString(biopsia.e)} icon={<Iconify icon="tabler:circle-letter-e" />} />
+                                        <Chip variant="outlined" color="primary" label={getBooleanString(biopsia.e)} icon={<Iconify icon="tabler:circle-letter-e" />} />
 
-                                        <Chip variant="outlined" color="s" label={getBooleanString(biopsia.s)} icon={<Iconify icon="tabler:circle-letter-s" />} />
+                                        <Chip variant="outlined" color="primary" label={getBooleanString(biopsia.s)} icon={<Iconify icon="tabler:circle-letter-s" />} />
 
-                                        <Chip variant="outlined" color="t" label={biopsia.t} icon={<Iconify icon="tabler:circle-letter-t" />} />
+                                        <Chip variant="outlined" color="primary" label={biopsia.t} icon={<Iconify icon="tabler:circle-letter-t" />} />
 
-                                        <Chip variant="outlined" color="c" label={getBooleanString(biopsia.c)} icon={<Iconify icon="tabler:circle-letter-c" />} />
+                                        <Chip variant="outlined" color="primary" label={getBooleanString(biopsia.c)} icon={<Iconify icon="tabler:circle-letter-c" />} />
                                     </ThemeProvider>
                                 </div>
                             </div>
@@ -582,20 +586,25 @@ export default function PazientePage() {
                     <Divider style={{ marginTop: '1rem', marginBottom: '1rem' }} />
 
                     <Typography variant='h6' gutterBottom>Tutti i follow up</Typography>
-                    <Typography variant="body" sx={{ color: 'text.secondary' }} style={{ display: 'inline' }}>Seleziona i follow up per la predizione</Typography>
+                    {followupSize > 0 ? 
+                        <Typography variant="body" sx={{ color: 'text.secondary' }} style={{ display: 'inline' }}>Seleziona i follow up per la predizione</Typography> : 
+                        <Typography variant="body" sx={{ color: 'text.secondary' }} style={{ display: 'inline' }}>Nessun follow up salvato</Typography>
+                    }
+                    
                     <Paper sx={{ maxHeight: '35vh', overflow: 'auto' }}>
                         <List sx={{ width: '100%' }}>
                             {followupLoaded && followup.map((row) => {
                                 return (
                                     <div>
-                                        <ListItemButton disableRipple>
+                                        <ListItemButton disableRipple onClick={() => handleClick(row.id)}>
                                             <ListItemIcon>
                                                 <Checkbox
+                                                    onClick={(e) => checkboxClick(e)}
                                                     edge="start"
                                                     disableRipple
                                                 />
                                             </ListItemIcon>
-                                            <span style={{ display: 'contents' }} onClick={() => handleClick(row.id)}>
+                                            <span style={{ display: 'contents', fontWeight: 800 }}>
                                                 <ListItemText primary={"Follow up del " + row.data}/>
                                                 {open.get(row.id) ? <ExpandLess /> : <ExpandMore />}
                                             </span>
