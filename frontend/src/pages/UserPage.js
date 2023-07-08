@@ -129,52 +129,51 @@ export default function UserPage() {
         publicid: localStorage.getItem('user')
       }
     }).then(function (response) {
-      console.log(response);
       if (response.status === 200) {
         setPazienti(response.data);
         setPazientiSize(Object.entries(pazienti).length)
 
         setLoaded(true);
-
-
       }
     }).catch(function (error) {
-      console.log(error);
+      
     });
   }
 
   function savePaziente() {
-    axios({
-      method: 'post',
-      url: 'http://localhost:5000/save_paziente',
-      data: {
-        nome: formInputs.nome,
-        cognome: formInputs.cognome,
-        data: dateValue.format("DD/MM/YYYY"),
-        sesso: formInputs.sesso,
-        publicid: localStorage.getItem('user')
-      }
-    }).then(function (response) {
-      console.log(response);
-      if (response.status === 200) {
-        getAllPazienti();
-
-        setSuccessAlert(true);
-        setDisableButton(true);
-
-        setTimeout(() => {
-          handleCloseModal();
-          setDisableButton(false);
-          setSuccessAlert(false);
-
-          resetFormInputs();
-          setDateValue(null);
-
-        }, 3000);
-      }
-    }).catch(function (error) {
-      console.log(error);
-    });
+    if(formInputs.nome !== '' && formInputs.cognome !== '' &&
+        dateValue !== null && formInputs.sesso !== undefined) {
+          axios({
+            method: 'post',
+            url: 'http://localhost:5000/save_paziente',
+            data: {
+              nome: formInputs.nome,
+              cognome: formInputs.cognome,
+              data: dateValue.format("DD/MM/YYYY"),
+              sesso: formInputs.sesso,
+              publicid: localStorage.getItem('user')
+            }
+          }).then(function (response) {
+            if (response.status === 200) {
+              getAllPazienti();
+      
+              setSuccessAlert(true);
+              setDisableButton(true);
+      
+              setTimeout(() => {
+                handleCloseModal();
+                setDisableButton(false);
+                setSuccessAlert(false);
+      
+                resetFormInputs();
+                setDateValue(null);
+      
+              }, 3000);
+            }
+          }).catch(function (error) {
+            
+          });
+        }
   }
 
   function getSexString(sex) {

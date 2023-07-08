@@ -31,25 +31,32 @@ export default function LoginForm() {
 
   const handleClick = () => {
     localStorage.clear();
-    axios({
-      method: 'post',
-      url: 'http://localhost:5000/signup',
-      data: {
-          nome: nomeRef.current.value,
-          cognome: cognomeRef.current.value,
-          email: emailRef.current.value,
-          password: md5(passwordRef.current.value)
-      }
-    }).then(function (response) {
-      console.log(response);
-      if(response.status === 200) {
-        localStorage.setItem("user", response.data.publicid);
-        navigate('/pazienti', { replace: true });
-      }
-    }).catch(function (error) {
-        console.log(error);
-        localStorage.clear();
-    });
+    if(nomeRef.current.value !== '' &&
+        cognomeRef.current.value !== '' &&
+        emailRef.current.value !== '' &&
+        passwordRef.current.value !== ''
+    ) {
+      axios({
+        method: 'post',
+        url: 'http://localhost:5000/signup',
+        data: {
+            nome: nomeRef.current.value,
+            cognome: cognomeRef.current.value,
+            email: emailRef.current.value,
+            password: md5(passwordRef.current.value)
+        }
+      }).then(function (response) {
+        console.log(response);
+        if(response.status === 200) {
+          localStorage.setItem("user", response.data.publicid);
+          navigate('/pazienti', { replace: true });
+        }
+      }).catch(function (error) {
+          console.log(error);
+          localStorage.clear();
+      });
+    }
+
   };
 
   return (

@@ -30,7 +30,6 @@ export default function AccountPopover() {
   const [email, setEmail] = useState("");
 
   useEffect(() => {
-    console.log(localStorage.getItem('user'))
     axios({
       method: 'post',
       url: 'http://localhost:5000/medico',
@@ -38,14 +37,12 @@ export default function AccountPopover() {
           publicid: localStorage.getItem('user'),
       }
     }).then(function (response) {
-      console.log(response);
       if(response.status === 200) {
         setNome(response.data.nome);
         setCognome(response.data.cognome);
         setEmail(response.data.email);
       }
     }).catch(function (error) {
-      console.log(error);
     });
    
   }, []);

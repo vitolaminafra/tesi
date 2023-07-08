@@ -41,6 +41,7 @@ import Iconify from '../components/iconify';
 // sections
 import MaleRoundedIcon from '@mui/icons-material/MaleRounded';
 import FemaleRoundedIcon from '@mui/icons-material/FemaleRounded';
+import InsightsRoundedIcon from '@mui/icons-material/InsightsRounded';
 
 import useForm from 'src/hooks/UseForm';
 
@@ -154,7 +155,9 @@ export default function PazientePage() {
     const [followupSize, setFollowupSize] = useState(0);
     const [followupLoaded, setFollowupLoaded] = useState(false);
 
-    const [open, setOpen] = useState({});
+    const [open, setOpen] = useState(new Map());
+
+    const [selected, setSelected] = useState(0);
 
     const handleClick = (id) => {
         let o = new Map();
@@ -167,6 +170,12 @@ export default function PazientePage() {
 
     const checkboxClick = (e) => {
         e.stopPropagation();
+    
+        if(e.target.checked) {
+            setSelected(selected + 1);
+        } else {
+            setSelected(selected - 1);
+        }
     }
 
     const MValues = [
@@ -313,7 +322,7 @@ export default function PazientePage() {
 
             }
         }).catch(function (error) {
-            console.log(error);
+            
         });
     }
 
@@ -335,7 +344,7 @@ export default function PazientePage() {
 
             }
         }).catch(function (error) {
-            console.log(error);
+            
         });
     }
 
@@ -343,84 +352,100 @@ export default function PazientePage() {
     function saveBiopsia() {
         let id = window.location.pathname.split('/')[2];
 
-        axios({
-            method: 'post',
-            url: 'http://localhost:5000/add_biopsia',
-            data: {
-                id_paziente: id,
-                data: dateValue.format("DD/MM/YYYY"),
-                m: formInputs.m,
-                e: formInputs.e,
-                s: formInputs.s,
-                t: formInputs.t,
-                c: formInputs.c,
+        if(dateValue !== null && formInputs.m !== undefined &&
+            formInputs.e !== undefined && formInputs.s !== undefined &&
+            formInputs.t !== undefined && formInputs.c !== undefined) {
+
+                axios({
+                    method: 'post',
+                    url: 'http://localhost:5000/add_biopsia',
+                    data: {
+                        id_paziente: id,
+                        data: dateValue.format("DD/MM/YYYY"),
+                        m: formInputs.m,
+                        e: formInputs.e,
+                        s: formInputs.s,
+                        t: formInputs.t,
+                        c: formInputs.c,
+                    }
+                }).then(function (response) {
+        
+                    if (response.status === 200) {
+        
+                        setSuccessAlert(true);
+                        setDisableButton(true);
+        
+                        getBiopsia();
+        
+                        setTimeout(() => {
+                            handleCloseBiopsiaModal();
+                            setDisableButton(false);
+                            setSuccessAlert(false);
+        
+                            resetFormInputs();
+                            setDateValue(null);
+        
+                        }, 3000);
+                    }
+                }).catch(function (error) {
+                    
+                });
+        
             }
-        }).then(function (response) {
-
-            if (response.status === 200) {
-
-                setSuccessAlert(true);
-                setDisableButton(true);
-
-                getBiopsia();
-
-                setTimeout(() => {
-                    handleCloseBiopsiaModal();
-                    setDisableButton(false);
-                    setSuccessAlert(false);
-
-                    resetFormInputs();
-                    setDateValue(null);
-
-                }, 3000);
-            }
-        }).catch(function (error) {
-            console.log(error);
-        });
-
     }
 
     function saveFollowup() {
         let id = window.location.pathname.split('/')[2];
 
-        axios({
-            method: 'post',
-            url: 'http://localhost:5000/add_followup',
-            data: {
-                id_paziente: id,
-                data: dateValue.format("DD/MM/YYYY"),
-                altezza: formInputs.altezza,
-                peso: formInputs.peso,
-                systolic: formInputs.systolic,
-                diastolic: formInputs.diastolic,
-                creatinine: formInputs.creatinine,
-                uprotein: formInputs.uprotein,
-                nbofbpmeds: formInputs.nbofbpmeds,
-                rasblockers: formInputs.rasblockers,
-                immunotherapies: formInputs.immunotherapies,
+        if(dateValue !== null && formInputs.altezza !== ''&&
+            formInputs.peso !== ''&&
+            formInputs.systolic !== ''&&
+            formInputs.diastolic !== ''&&
+            formInputs.creatinine !== ''&&
+            formInputs.uprotein !== '' && 
+            formInputs.nbofbpmeds !== undefined &&
+            formInputs.rasblockers !== undefined &&
+            formInputs.immunotherapies !== undefined) {
+
+                axios({
+                    method: 'post',
+                    url: 'http://localhost:5000/add_followup',
+                    data: {
+                        id_paziente: id,
+                        data: dateValue.format("DD/MM/YYYY"),
+                        altezza: formInputs.altezza,
+                        peso: formInputs.peso,
+                        systolic: formInputs.systolic,
+                        diastolic: formInputs.diastolic,
+                        creatinine: formInputs.creatinine,
+                        uprotein: formInputs.uprotein,
+                        nbofbpmeds: formInputs.nbofbpmeds,
+                        ras: formInputs.rasblockers,
+                        immunotherapies: formInputs.immunotherapies,
+                    }
+                }).then(function (response) {
+        
+                    if (response.status === 200) {
+        
+                        setSuccessAlert(true);
+                        setDisableButton(true);
+        
+                        getFollowup();
+        
+                        setTimeout(() => {
+                            handleCloseFollowUpModal();
+                            setDisableButton(false);
+                            setSuccessAlert(false);
+        
+                            resetFormInputs();
+                            setDateValue(null);
+        
+                        }, 3000);
+                    }
+                }).catch(function (error) {
+                    
+                });
             }
-        }).then(function (response) {
-
-            if (response.status === 200) {
-
-                setSuccessAlert(true);
-                setDisableButton(true);
-
-                getFollowup();
-
-                setTimeout(() => {
-                    handleCloseFollowUpModal();
-                    setDisableButton(false);
-                    setSuccessAlert(false);
-
-                    resetFormInputs();
-                    setDateValue(null);
-
-                }, 3000);
-            }
-        }).catch(function (error) {
-            console.log(error);
-        });
 
     }
 
@@ -436,20 +461,13 @@ export default function PazientePage() {
         }).then(function (response) {
             if (response.status === 200) {
                 setFollowup(response.data);
-                setFollowupSize(Object.entries(followup).length)
-
-                let opens = new Map();
-                response.data.forEach( fu => {
-                    opens.set(fu.id, false);
-                })
-
-                setOpen(opens);
+                setFollowupSize(response.data.length);
 
                 setFollowupLoaded(true);
 
             }
         }).catch(function (error) {
-            console.log(error);
+            
         });
     }
 
@@ -585,21 +603,31 @@ export default function PazientePage() {
                     }
                     <Divider style={{ marginTop: '1rem', marginBottom: '1rem' }} />
 
-                    <Typography variant='h6' gutterBottom>Tutti i follow up</Typography>
-                    {followupSize > 0 ? 
-                        <Typography variant="body" sx={{ color: 'text.secondary' }} style={{ display: 'inline' }}>Seleziona i follow up per la predizione</Typography> : 
-                        <Typography variant="body" sx={{ color: 'text.secondary' }} style={{ display: 'inline' }}>Nessun follow up salvato</Typography>
-                    }
-                    
+                    <div style={{display: 'flex', justifyContent: 'space-between', marginBottom: '1rem'}}>
+                        <div style={{display: 'flex', flexDirection: 'column'}}>
+                            <Typography variant='h6' gutterBottom>Tutti i follow up</Typography>
+                            {followupSize > 0 ? 
+                                <Typography variant="body" sx={{ color: 'text.secondary' }} style={{ display: 'inline' }}>Seleziona i follow up per la predizione</Typography> : 
+                                <Typography variant="body" sx={{ color: 'text.secondary' }} style={{ display: 'inline' }}>Nessun follow up salvato</Typography>
+                            }
+                        </div>
+                        <div style={{display: 'flex', alignItems: 'center'}}>
+                            <Button className="submit-button" disabled={selected < 2 || !isBiopsia} startIcon={<InsightsRoundedIcon />} size="medium" variant="contained">
+                                { (!isBiopsia && 'Nessuna biopsia inserita') ||
+                                 (selected < 2 && 'Seleziona almeno due follow up') ||
+                                 (selected >= 2 && isBiopsia && 'Predizione')}
+                            </Button>
+                        </div>
+                    </div>
                     <Paper sx={{ maxHeight: '35vh', overflow: 'auto' }}>
                         <List sx={{ width: '100%' }}>
                             {followupLoaded && followup.map((row) => {
                                 return (
-                                    <div>
+                                    <div key={row.id}>
                                         <ListItemButton disableRipple onClick={() => handleClick(row.id)}>
                                             <ListItemIcon>
                                                 <Checkbox
-                                                    onClick={(e) => checkboxClick(e)}
+                                                    onClick={(e) => checkboxClick(e, row.id)}
                                                     edge="start"
                                                     disableRipple
                                                 />
@@ -820,9 +848,10 @@ export default function PazientePage() {
                                 <DesktopDatePicker
                                     id="date"
                                     name="date"
-                                    label="Data follow up"
+                                    label="Data follow up*"
                                     format='DD/MM/YYYY'
                                     value={dateValue}
+                                    required
                                     onChange={(newValue) => {
                                         setDateValue(newValue);
                                     }}
@@ -838,6 +867,7 @@ export default function PazientePage() {
                                 variant="outlined"
                                 required
                                 fullWidth
+                                type='number'
                                 onChange={handleInputChange}
                                 value={formInputs.height}
                                 InputProps={{
@@ -852,6 +882,7 @@ export default function PazientePage() {
                                 variant="outlined"
                                 required
                                 fullWidth
+                                type='number'
                                 onChange={handleInputChange}
                                 value={formInputs.weight}
                                 InputProps={{
@@ -866,6 +897,7 @@ export default function PazientePage() {
                                 label="Systolic"
                                 variant="outlined"
                                 required
+                                type='number'
                                 onChange={handleInputChange}
                                 value={formInputs.systolic}
                                 fullWidth />
@@ -877,6 +909,7 @@ export default function PazientePage() {
                                 label="Diastolic"
                                 variant="outlined"
                                 required
+                                type='number'
                                 onChange={handleInputChange}
                                 value={formInputs.diastolic}
                                 fullWidth />
@@ -888,6 +921,7 @@ export default function PazientePage() {
                                 label="Creatinine"
                                 variant="outlined"
                                 required
+                                type='number'
                                 onChange={handleInputChange}
                                 value={formInputs.creatinine}
                                 fullWidth />
@@ -899,6 +933,7 @@ export default function PazientePage() {
                                 label="Uprotein"
                                 variant="outlined"
                                 required
+                                type='number'
                                 onChange={handleInputChange}
                                 value={formInputs.uprotein}
                                 fullWidth />
